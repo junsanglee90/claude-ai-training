@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude AI 교육 수강신청</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="logo-mark">✦</div>
+      <span class="logo-text">전사 Claude AI 교육</span>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-btn active" id="nav-register" onclick="switchTab('register')">수강 신청</button>
+      <button class="nav-btn" id="nav-lookup" onclick="switchTab('lookup')">신청 내역 조회</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ── 수강 신청 섹션 ── -->
+  <section id="section-register">
+
+    <!-- 단계 표시 -->
+    <div class="steps">
+      <div class="step-item" id="step-ind-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">정보 입력</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item inactive" id="step-ind-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">일정 선택</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item inactive" id="step-ind-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">신청 완료</div>
+      </div>
+    </div>
+
+    <!-- Step 1: 정보 입력 -->
+    <div class="card" id="card-step-1">
+      <h2 class="card-title">신청자 정보 입력</h2>
+      <p class="card-desc">소속 조직명과 이름을 입력해 주세요.</p>
+      <div class="form-group">
+        <label for="inputOrg">소속 조직명</label>
+        <input type="text" id="inputOrg" placeholder="예) 개발팀, 마케팅팀" maxlength="50" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="inputName">이름</label>
+        <input type="text" id="inputName" placeholder="홍길동" maxlength="20" autocomplete="off">
+      </div>
+      <button class="btn btn--primary" onclick="goToStep2()">다음 단계</button>
+    </div>
+
+    <!-- Step 2: 일정 선택 -->
+    <div class="card hidden" id="card-step-2">
+      <h2 class="card-title">수강 일정 선택</h2>
+      <p class="card-desc">원하는 교육 일정을 선택해 주세요. 일정을 클릭하면 선택됩니다.</p>
+      <div id="scheduleList"></div>
+      <div class="btn-row">
+        <button class="btn btn--ghost" onclick="goToStep1()">← 이전</button>
+        <button class="btn btn--primary" onclick="submitRegistration()">신청하기</button>
+      </div>
+    </div>
+
+    <!-- Step 3: 완료 -->
+    <div class="card hidden" id="card-step-3">
+      <div class="success-screen">
+        <div class="success-icon-wrap">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M6 16l8 8 12-14" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="success-title">수강 신청 완료!</h2>
+        <p class="success-sub">아래 내용으로 수강 신청이 완료되었습니다.</p>
+        <div class="detail-box" id="successDetails"></div>
+        <p class="success-note">신청 취소는 상단 <strong>'신청 내역 조회'</strong>에서 할 수 있습니다.</p>
+        <button class="btn btn--primary" onclick="resetRegistration()">새로 신청하기</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── 신청 내역 조회 섹션 ── -->
+  <section id="section-lookup" class="hidden">
+    <div class="card">
+      <h2 class="card-title">신청 내역 조회</h2>
+      <p class="card-desc">신청 시 입력한 조직명과 이름으로 조회합니다.</p>
+      <div class="form-group">
+        <label for="lookupOrg">소속 조직명</label>
+        <input type="text" id="lookupOrg" placeholder="예) 개발팀" maxlength="50" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="lookupName">이름</label>
+        <input type="text" id="lookupName" placeholder="홍길동" maxlength="20" autocomplete="off">
+      </div>
+      <button class="btn btn--primary" onclick="lookupRegistration()">조회하기</button>
+    </div>
+    <div id="lookupResult"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <a href="admin.html">관리자 페이지 →</a>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/user.js"></script>
+<script>showStep(1);</script>
+</body>
+</html>
