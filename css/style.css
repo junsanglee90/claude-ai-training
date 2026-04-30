@@ -523,6 +523,67 @@ body {
 .toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ══════════════════════
+   ONLINE / OFFLINE BADGES
+══════════════════════ */
+.badge-type {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: .3px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+.badge-type--online {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.badge-type--offline {
+  background: var(--warning-light);
+  color: #b45309;
+}
+
+/* Admin: schedule tab type badge */
+.sched-tab-type-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 99px;
+  letter-spacing: .3px;
+}
+.sched-tab-type--online {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.sched-tab-type--offline {
+  background: var(--warning-light);
+  color: #b45309;
+}
+
+/* Admin: toggle type button */
+.btn-toggle-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all .18s;
+  font-family: inherit;
+}
+.btn-toggle-type:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ══════════════════════
    LOADING OVERLAY
 ══════════════════════ */
 .loading-overlay {

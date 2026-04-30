@@ -107,13 +107,18 @@ function renderSchedules() {
     const fillPct = Math.min((count / s.maxSlots) * 100, 100);
     const slotClass = full ? 'slot-text--full' : available <= 5 ? 'slot-text--warning' : 'slot-text--ok';
 
+    const isOnline = s.type === '온라인';
+    const typeBadge = isOnline
+      ? '<span class="badge-type badge-type--online">온라인</span>'
+      : '<span class="badge-type badge-type--offline">오프라인</span>';
+
     return `
       <div class="schedule-item${full ? ' schedule-item--full' : ''}${selected ? ' schedule-item--selected' : ''}"
            onclick="${full ? 'handleFullSlot()' : `selectSchedule(${s.id})`}">
         <div class="schedule-main">
-          <div class="schedule-date">${formatDate(s.date, s.dayOfWeek)}</div>
+          <div class="schedule-date">${formatDate(s.date, s.dayOfWeek)} ${typeBadge}</div>
           <div class="schedule-time">${s.time}</div>
-          <div class="schedule-location"><svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S5.17 3.5 6 3.5 7.5 4.17 7.5 5 6.83 6.5 6 6.5z" fill="currentColor"/></svg>${s.location}</div>
+          <div class="schedule-location"><svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S5.17 3.5 6 3.5 7.5 4.17 7.5 5 6.83 6.5 6 6.5z" fill="currentColor"/></svg>${isOnline ? '온라인 (Zoom)' : s.location}</div>
         </div>
         <div class="schedule-side">
           <div class="slot-bar-wrap">
@@ -184,7 +189,8 @@ function renderSuccess(reg, schedule) {
     <div class="detail-row"><span class="detail-label">이름</span><span class="detail-value">${escapeHtml(reg.name)}</span></div>
     <div class="detail-row"><span class="detail-label">교육일</span><span class="detail-value">${schedule ? formatDate(schedule.date, schedule.dayOfWeek) : ''}</span></div>
     <div class="detail-row"><span class="detail-label">시간</span><span class="detail-value">${schedule ? schedule.time : ''}</span></div>
-    <div class="detail-row"><span class="detail-label">장소</span><span class="detail-value">${schedule ? schedule.location : ''}</span></div>
+    <div class="detail-row"><span class="detail-label">형태</span><span class="detail-value">${schedule ? (schedule.type === '온라인' ? '온라인 (Zoom)' : '오프라인') : ''}</span></div>
+    <div class="detail-row"><span class="detail-label">장소</span><span class="detail-value">${schedule ? (schedule.type === '온라인' ? '온라인 (Zoom 링크 별도 안내)' : schedule.location) : ''}</span></div>
   `;
 }
 

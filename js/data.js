@@ -114,6 +114,11 @@ async function fetchAllRegistrations(password) {
   return data.registrations;
 }
 
+/** 관리자: 온라인/오프라인 전환 */
+async function requestToggleType(info) {
+  return apiCall({ action: 'toggleType', scheduleId: info.scheduleId, type: info.type, pw: info.password });
+}
+
 /** 날짜 포맷 */
 function formatDate(dateStr, dayOfWeek) {
   var parts = dateStr.split('-');

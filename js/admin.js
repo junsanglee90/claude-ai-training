@@ -115,9 +115,11 @@ function renderScheduleTabs(schedules) {
     const count = adminState.registrations.filter(r => r.scheduleId === s.id).length;
     const full = count >= s.maxSlots;
     const selected = adminState.selectedScheduleId === s.id;
+    const isOnline = s.type === '온라인';
     return `
       <button class="sched-tab${selected ? ' sched-tab--active' : ''}${full ? ' sched-tab--full' : ''}"
               onclick="selectAdminSchedule(${s.id})">
+        <span class="sched-tab-type-badge ${isOnline ? 'sched-tab-type--online' : 'sched-tab-type--offline'}">${isOnline ? '온라인' : '오프라인'}</span>
         <span class="sched-tab-date">${formatShortDate(s.date)}</span>
         <span class="sched-tab-time">${s.time}</span>
         <span class="sched-tab-count${full ? ' count--full' : ''}">${count}/${s.maxSlots}</span>
@@ -145,12 +147,21 @@ function renderRegistrantSection(scheduleId) {
   const max = s ? s.maxSlots : 0;
   const avail = max - count;
 
+  const isOnline = s && s.type === '온라인';
+  const toggleLabel = isOnline ? '오프라인으로 변경' : '온라인으로 변경';
+  const toggleNewType = isOnline ? '오프라인' : '온라인';
+
   document.getElementById('detailHeader').innerHTML = s ? `
     <div class="detail-title">
       <span class="detail-date">${formatShortDate(s.date)}</span>
-      <span class="detail-time-loc">${s.time} &nbsp;·&nbsp; ${s.location}</span>
+      <span class="detail-time-loc">${s.time} &nbsp;·&nbsp; ${isOnline ? '온라인 (Zoom)' : s.location}</span>
     </div>
     <div class="detail-chips">
+      <span class="badge-type ${isOnline ? 'badge-type--online' : 'badge-type--offline'}">${isOnline ? '온라인' : '오프라인'}</span>
+      <button class="btn-toggle-type" onclick="toggleScheduleType(${s.id}, '${toggleNewType}')" title="${toggleLabel}">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M9 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ${toggleLabel}
+      </button>
       <span class="chip chip--total">전체 ${max}석</span>
       <span class="chip chip--reg">신청 ${count}명</span>
       <span class="chip ${avail <= 0 ? 'chip--full' : 'chip--avail'}">잔여 ${avail}석</span>
@@ -189,6 +200,29 @@ function formatDateTime(dateTimeStr) {
   const [y, m, d] = parts[0].split('-');
   const timePart = parts[1].substring(0, 5); // HH:mm
   return `${parseInt(m)}/${parseInt(d)} ${timePart}`;
+}
+
+// ─── 온/오프라인 전환 ───
+async function toggleScheduleType(scheduleId, newType) {
+  showLoading(true);
+  try {
+    const result = await requestToggleType({
+      scheduleId: scheduleId,
+      type: newType,
+      password: adminState.password
+    });
+    if (result.ok) {
+      showAdminToast(newType + '으로 변경되었습니다.');
+      await loadDashboardData();
+    } else {
+      showAdminToast('변경에 실패했습니다.');
+    }
+  } catch (err) {
+    showAdminToast('서버 연결에 실패했습니다.');
+    console.error(err);
+  } finally {
+    showLoading(false);
+  }
 }
 
 // ─── 관리자 삭제 ───
