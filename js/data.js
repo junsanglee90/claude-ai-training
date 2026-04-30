@@ -84,34 +84,12 @@ async function fetchLookup(org, name) {
 
 /** 수강 신청 */
 async function requestRegister(info) {
-  return apiCall({ action: 'register', scheduleId: info.scheduleId, org: info.org, name: info.name, email: info.email || '' });
-}
-
-/** 대기 신청 */
-async function requestWaitlist(info) {
-  return apiCall({ action: 'waitlist', scheduleId: info.scheduleId, org: info.org, name: info.name, email: info.email || '' });
+  return apiCall({ action: 'register', scheduleId: info.scheduleId, org: info.org, name: info.name });
 }
 
 /** 수강 취소 */
 async function requestCancel(id) {
   return apiCall({ action: 'cancel', id: id });
-}
-
-/** 대기 취소 */
-async function requestCancelWaitlist(id) {
-  return apiCall({ action: 'cancelWaitlist', id: id });
-}
-
-/** 관리자: 대기자 삭제 */
-async function requestAdminDeleteWaitlist(info) {
-  return apiCall({ action: 'adminDeleteWaitlist', id: info.id, pw: info.password });
-}
-
-/** 관리자: 전체 대기자 조회 */
-async function fetchAllWaitlist(password) {
-  var data = await apiCall({ action: 'getAllWaitlist', pw: password });
-  if (!data.ok) throw new Error(data.error);
-  return data.waitlist;
 }
 
 /** 관리자 로그인 */
