@@ -6,7 +6,8 @@ let adminState = {
   selectedScheduleId: null,
   password: '',
   schedules: [],
-  registrations: []
+  registrations: [],
+  waitlist: []
 };
 
 // ─── 초기화 ───
@@ -72,13 +73,15 @@ async function showDashboard() {
 async function loadDashboardData() {
   showLoading(true);
   try {
-    const [schedules, registrations] = await Promise.all([
+    const [schedules, registrations, waitlist] = await Promise.all([
       fetchSchedules(),
-      fetchAllRegistrations(adminState.password)
+      fetchAllRegistrations(adminState.password),
+      fetchAllWaitlist(adminState.password)
     ]);
 
     adminState.schedules = schedules;
     adminState.registrations = registrations;
+    adminState.waitlist = waitlist;
 
     if (!adminState.selectedScheduleId && schedules.length > 0) {
       adminState.selectedScheduleId = schedules[0].id;
@@ -167,25 +170,61 @@ function renderRegistrantSection(scheduleId) {
       <span class="chip ${avail <= 0 ? 'chip--full' : 'chip--avail'}">잔여 ${avail}석</span>
     </div>` : '';
 
+  // 신청자 테이블
   const tbody = document.getElementById('registrantTbody');
   if (regs.length === 0) {
     tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">신청자가 없습니다.</td></tr>`;
-    return;
+  } else {
+    tbody.innerHTML = regs.map((r, idx) => `
+      <tr>
+        <td class="td-center td-num">${idx + 1}</td>
+        <td>${escapeHtml(r.org)}</td>
+        <td>${escapeHtml(r.name)}</td>
+        <td class="td-center td-muted">${formatDateTime(r.registeredAt)}</td>
+        <td class="td-center">
+          <button class="btn-del" onclick="adminDelete('${r.id}')" title="삭제">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </td>
+      </tr>`).join('');
   }
-  tbody.innerHTML = regs.map((r, idx) => `
-    <tr>
-      <td class="td-center td-num">${idx + 1}</td>
-      <td>${escapeHtml(r.org)}</td>
-      <td>${escapeHtml(r.name)}</td>
-      <td class="td-center td-muted">${formatDateTime(r.registeredAt)}</td>
-      <td class="td-center">
-        <button class="btn-del" onclick="adminDelete('${r.id}')" title="삭제">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </td>
-    </tr>`).join('');
+
+  // 대기자 테이블
+  const waitRegs = adminState.waitlist.filter(w => w.scheduleId === scheduleId);
+  const waitSection = document.getElementById('waitlistSection');
+  if (waitRegs.length === 0) {
+    waitSection.innerHTML = `
+      <div class="table-actions"><span class="table-actions-title">대기자 명단</span><span class="chip chip--total">0명</span></div>
+      <div class="empty-cell" style="padding:20px">대기자가 없습니다.</div>`;
+  } else {
+    waitSection.innerHTML = `
+      <div class="table-actions"><span class="table-actions-title">대기자 명단</span><span class="chip chip--wait-count">${waitRegs.length}명</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th style="width:48px;text-align:center">순번</th>
+          <th>소속 조직명</th><th>이름</th><th>이메일</th>
+          <th style="width:100px;text-align:center">신청일시</th>
+          <th style="width:52px;text-align:center">삭제</th>
+        </tr></thead>
+        <tbody>${waitRegs.map((w, idx) => `
+          <tr>
+            <td class="td-center td-num">${idx + 1}</td>
+            <td>${escapeHtml(w.org)}</td>
+            <td>${escapeHtml(w.name)}</td>
+            <td class="td-muted">${escapeHtml(w.email || '-')}</td>
+            <td class="td-center td-muted">${formatDateTime(w.registeredAt)}</td>
+            <td class="td-center">
+              <button class="btn-del" onclick="adminDeleteWaitlist('${w.id}')" title="삭제">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </td>
+          </tr>`).join('')}</tbody>
+      </table></div>`;
+  }
 }
 
 function escapeHtml(str) {
@@ -223,6 +262,22 @@ async function toggleScheduleType(scheduleId, newType) {
   } finally {
     showLoading(false);
   }
+}
+
+// ─── 관리자 대기자 삭제 ───
+async function adminDeleteWaitlist(id) {
+  showConfirmAdmin('이 대기자를 삭제하시겠습니까?', async () => {
+    showLoading(true);
+    try {
+      const result = await requestAdminDeleteWaitlist({ id, password: adminState.password });
+      if (result.ok) {
+        showAdminToast('대기자가 삭제되었습니다.');
+        await loadDashboardData();
+      } else {
+        showAdminToast('삭제에 실패했습니다.');
+      }
+    } catch (err) { showAdminToast('서버 연결에 실패했습니다.'); } finally { showLoading(false); }
+  });
 }
 
 // ─── 관리자 삭제 ───
