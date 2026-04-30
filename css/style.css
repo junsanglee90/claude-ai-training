@@ -523,6 +523,53 @@ body {
 .toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ══════════════════════
+   INPUT HINT
+══════════════════════ */
+.input-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* ══════════════════════
+   SUCCESS BADGES
+══════════════════════ */
+.success-badge-wrap { text-align: center; margin-bottom: 16px; }
+.success-badge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 99px;
+}
+.success-badge--reg { background: var(--success-light); color: var(--success); }
+.success-badge--wait { background: #dbeafe; color: #2563eb; }
+
+/* ══════════════════════
+   WAITLIST BADGES
+══════════════════════ */
+.badge--wait {
+  background: #dbeafe;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.result-card--wait { border-left: 3px solid #2563eb; }
+.result-count--wait { background: #dbeafe; color: #2563eb; }
+.badge-type--wait { background: #dbeafe; color: #2563eb; }
+.chip--wait-count {
+  background: #dbeafe;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 99px;
+}
+
+/* ══════════════════════
    ONLINE / OFFLINE BADGES
 ══════════════════════ */
 .badge-type {
