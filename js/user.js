@@ -1,12 +1,13 @@
 /**
- * user.js — 수강신청 사용자 페이지 (API 연동 버전)
+ * user.js — 수강신청 사용자 페이지 (이메일 수집 포함, 대기 기능 없음)
  */
 
 let state = {
   org: '',
   name: '',
+  email: '',
   selectedScheduleId: null,
-  schedules: [] // 서버에서 받아온 일정 캐시
+  schedules: []
 };
 
 // ─── 초기화 ───
@@ -15,6 +16,9 @@ function initPage() {
     if (e.key === 'Enter') document.getElementById('inputName').focus();
   });
   document.getElementById('inputName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('inputEmail').focus();
+  });
+  document.getElementById('inputEmail').addEventListener('keydown', e => {
     if (e.key === 'Enter') goToStep2();
   });
   document.getElementById('lookupOrg').addEventListener('keydown', e => {
@@ -31,9 +35,7 @@ function switchTab(tab) {
     document.getElementById('section-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('nav-' + t).classList.toggle('active', t === tab);
   });
-  if (tab === 'lookup') {
-    document.getElementById('lookupResult').innerHTML = '';
-  }
+  if (tab === 'lookup') document.getElementById('lookupResult').innerHTML = '';
 }
 
 // ─── 단계 표시 ───
@@ -47,23 +49,23 @@ function showStep(step) {
   });
 }
 
-// ─── Step 1 → Step 2 ───
-function goToStep1() {
-  showStep(1);
-}
+function goToStep1() { showStep(1); }
 
 async function goToStep2() {
   const org = document.getElementById('inputOrg').value.trim();
   const name = document.getElementById('inputName').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
 
   if (!org) { showInputError('inputOrg', '조직명을 입력해 주세요.'); return; }
   if (!name) { showInputError('inputName', '이름을 입력해 주세요.'); return; }
+  if (!email) { showInputError('inputEmail', '이메일을 입력해 주세요.'); return; }
+  if (!email.includes('@')) { showInputError('inputEmail', '올바른 이메일 형식을 입력해 주세요.'); return; }
 
   state.org = org;
   state.name = name;
+  state.email = email;
   state.selectedScheduleId = null;
 
-  // 서버에서 최신 일정 정보 로드
   showLoading(true);
   try {
     state.schedules = await fetchSchedules();
@@ -77,7 +79,7 @@ async function goToStep2() {
   }
 }
 
-// ─── 입력 에러 표시 ───
+// ─── 입력 에러 ───
 function showInputError(id, msg) {
   const input = document.getElementById(id);
   input.classList.add('input-error');
@@ -106,7 +108,6 @@ function renderSchedules() {
     const selected = state.selectedScheduleId === s.id;
     const fillPct = Math.min((count / s.maxSlots) * 100, 100);
     const slotClass = full ? 'slot-text--full' : available <= 5 ? 'slot-text--warning' : 'slot-text--ok';
-
     const isOnline = s.type === '온라인';
     const typeBadge = isOnline
       ? '<span class="badge-type badge-type--online">온라인</span>'
@@ -127,7 +128,7 @@ function renderSchedules() {
           </div>
           <span class="badge ${full ? 'badge--full' : 'badge--open'}">${full ? '마감' : '신청 가능'}</span>
         </div>
-        ${selected ? '<div class="check-mark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#6366f1"/><path d="M5 10l4 4 6-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' : ''}
+        ${selected ? '<div class="check-mark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#C75B39"/><path d="M5 10l4 4 6-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' : ''}
       </div>`;
   }).join('');
 }
@@ -153,12 +154,13 @@ async function submitRegistration() {
     const result = await requestRegister({
       scheduleId: state.selectedScheduleId,
       org: state.org,
-      name: state.name
+      name: state.name,
+      email: state.email
     });
 
     if (!result.ok) {
       if (result.error === 'FULL') {
-        showModal('선택하신 일정이 마감되었습니다.\n다른 일정을 선택해 주세요.', async () => {
+        showModal('선택하신 일정이 방금 마감되었습니다.\n다른 일정을 선택해 주세요.', async () => {
           state.selectedScheduleId = null;
           state.schedules = await fetchSchedules();
           renderSchedules();
@@ -166,7 +168,7 @@ async function submitRegistration() {
       } else if (result.error === 'DUPLICATE') {
         showModal('이미 해당 일정에 수강 신청이 완료된 상태입니다.');
       } else {
-        showModal('신청 중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.');
+        showModal('신청 중 오류가 발생했습니다.');
       }
       return;
     }
@@ -175,7 +177,7 @@ async function submitRegistration() {
     renderSuccess(result.registration, schedule);
     showStep(3);
   } catch (err) {
-    showModal('서버 연결에 실패했습니다.\n잠시 후 다시 시도해 주세요.');
+    showModal('서버 연결에 실패했습니다.');
     console.error(err);
   } finally {
     showLoading(false);
@@ -184,20 +186,22 @@ async function submitRegistration() {
 
 // ─── 완료 화면 ───
 function renderSuccess(reg, schedule) {
+  const isOnline = schedule && schedule.type === '온라인';
   document.getElementById('successDetails').innerHTML = `
     <div class="detail-row"><span class="detail-label">소속</span><span class="detail-value">${escapeHtml(reg.org)}</span></div>
     <div class="detail-row"><span class="detail-label">이름</span><span class="detail-value">${escapeHtml(reg.name)}</span></div>
     <div class="detail-row"><span class="detail-label">교육일</span><span class="detail-value">${schedule ? formatDate(schedule.date, schedule.dayOfWeek) : ''}</span></div>
     <div class="detail-row"><span class="detail-label">시간</span><span class="detail-value">${schedule ? schedule.time : ''}</span></div>
-    <div class="detail-row"><span class="detail-label">형태</span><span class="detail-value">${schedule ? (schedule.type === '온라인' ? '온라인 (Zoom)' : '오프라인') : ''}</span></div>
-    <div class="detail-row"><span class="detail-label">장소</span><span class="detail-value">${schedule ? (schedule.type === '온라인' ? '온라인 (Zoom 링크 별도 안내)' : schedule.location) : ''}</span></div>
+    <div class="detail-row"><span class="detail-label">형태</span><span class="detail-value">${isOnline ? '온라인 (Zoom)' : '오프라인'}</span></div>
+    <div class="detail-row"><span class="detail-label">장소</span><span class="detail-value">${isOnline ? 'Zoom 링크 별도 안내' : (schedule ? schedule.location : '')}</span></div>
   `;
 }
 
 function resetRegistration() {
-  state = { org: '', name: '', selectedScheduleId: null, schedules: [] };
+  state = { org: '', name: '', email: '', selectedScheduleId: null, schedules: [] };
   document.getElementById('inputOrg').value = '';
   document.getElementById('inputName').value = '';
+  document.getElementById('inputEmail').value = '';
   showStep(1);
 }
 
@@ -230,12 +234,13 @@ async function lookupRegistration() {
         <h3 class="lookup-result-title">수강 신청 내역 <span class="result-count">${regs.length}건</span></h3>
         ${regs.map(r => {
           const s = schedules.find(x => x.id === r.scheduleId);
+          const isOnline = s && s.type === '온라인';
           return `
             <div class="result-card">
               <div class="result-info">
-                <div class="result-date">${s ? formatDate(s.date, s.dayOfWeek) : '알 수 없음'}</div>
+                <div class="result-date">${s ? formatDate(s.date, s.dayOfWeek) : '알 수 없음'}${s ? (isOnline ? ' <span class="badge-type badge-type--online">온라인</span>' : ' <span class="badge-type badge-type--offline">오프라인</span>') : ''}</div>
                 <div class="result-time">${s ? s.time : ''}</div>
-                <div class="result-loc">${s ? '📍 ' + s.location : ''}</div>
+                <div class="result-loc">${s ? '📍 ' + (isOnline ? '온라인 (Zoom)' : s.location) : ''}</div>
               </div>
               <button class="btn btn--danger-outline" onclick="confirmCancel('${r.id}')">신청 취소</button>
             </div>`;
@@ -254,7 +259,6 @@ async function lookupRegistration() {
   }
 }
 
-// ─── 신청 취소 ───
 function confirmCancel(id) {
   showConfirm('수강 신청을 취소하시겠습니까?', async () => {
     showLoading(true);
@@ -262,25 +266,19 @@ function confirmCancel(id) {
       const result = await requestCancel(id);
       if (result.ok) {
         showToast('수강 신청이 취소되었습니다.');
-        lookupRegistration(); // 다시 조회
+        lookupRegistration();
       } else {
-        showModal('취소에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        showModal('취소에 실패했습니다.');
       }
-    } catch (err) {
-      showModal('서버 연결에 실패했습니다.');
-      console.error(err);
-    } finally {
-      showLoading(false);
-    }
+    } catch (err) { showModal('서버 연결에 실패했습니다.'); } finally { showLoading(false); }
   });
 }
 
-// ─── 유틸: HTML 이스케이프 ───
+// ─── 유틸 ───
 function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ─── 유틸: 로딩 오버레이 ───
 function showLoading(show) {
   let overlay = document.getElementById('loadingOverlay');
   if (show) {
@@ -297,35 +295,18 @@ function showLoading(show) {
   }
 }
 
-// ─── 유틸: 모달 ───
 function showModal(message, callback) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = `
-    <div class="modal">
-      <p class="modal-msg">${message.replace(/\n/g, '<br>')}</p>
-      <div class="modal-footer">
-        <button class="btn btn--primary modal-ok">확인</button>
-      </div>
-    </div>`;
+  overlay.innerHTML = `<div class="modal"><p class="modal-msg">${message.replace(/\n/g, '<br>')}</p><div class="modal-footer"><button class="btn btn--primary modal-ok">확인</button></div></div>`;
   document.body.appendChild(overlay);
-  overlay.querySelector('.modal-ok').onclick = () => {
-    overlay.remove();
-    if (callback) callback();
-  };
+  overlay.querySelector('.modal-ok').onclick = () => { overlay.remove(); if (callback) callback(); };
 }
 
 function showConfirm(message, onYes) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
-  overlay.innerHTML = `
-    <div class="modal">
-      <p class="modal-msg">${message}</p>
-      <div class="modal-footer modal-footer--two">
-        <button class="btn btn--ghost" id="cfmNo">취소</button>
-        <button class="btn btn--danger" id="cfmYes">확인</button>
-      </div>
-    </div>`;
+  overlay.innerHTML = `<div class="modal"><p class="modal-msg">${message.replace(/\n/g, '<br>')}</p><div class="modal-footer modal-footer--two"><button class="btn btn--ghost" id="cfmNo">취소</button><button class="btn btn--danger" id="cfmYes">확인</button></div></div>`;
   document.body.appendChild(overlay);
   overlay.querySelector('#cfmNo').onclick = () => overlay.remove();
   overlay.querySelector('#cfmYes').onclick = () => { overlay.remove(); onYes(); };
@@ -333,15 +314,10 @@ function showConfirm(message, onYes) {
 
 function showToast(msg) {
   const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
+  t.className = 'toast'; t.textContent = msg;
   document.body.appendChild(t);
   requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('toast--show')); });
-  setTimeout(() => {
-    t.classList.remove('toast--show');
-    setTimeout(() => t.remove(), 300);
-  }, 2500);
+  setTimeout(() => { t.classList.remove('toast--show'); setTimeout(() => t.remove(), 300); }, 2500);
 }
 
-// ─── 페이지 로드 ───
 document.addEventListener('DOMContentLoaded', initPage);
