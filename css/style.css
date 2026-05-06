@@ -185,7 +185,7 @@ body {
   transition: all .3s;
 }
 .step-connector {
-  width: 56px;
+  width: 40px;
   height: 2px;
   background: var(--border);
   margin-bottom: 22px;
@@ -193,18 +193,22 @@ body {
 }
 #step-ind-1.active .step-circle,
 #step-ind-2.active .step-circle,
-#step-ind-3.active .step-circle {
+#step-ind-3.active .step-circle,
+#step-ind-4.active .step-circle {
   border-color: var(--primary);
   background: var(--primary);
   color: white;
 }
 #step-ind-1.active .step-label,
 #step-ind-2.active .step-label,
-#step-ind-3.active .step-label { color: var(--primary); font-weight: 600; }
+#step-ind-3.active .step-label,
+#step-ind-4.active .step-label { color: var(--primary); font-weight: 600; }
 #step-ind-1.completed .step-circle,
-#step-ind-2.completed .step-circle { border-color: var(--success); background: var(--success); color: white; }
+#step-ind-2.completed .step-circle,
+#step-ind-3.completed .step-circle { border-color: var(--success); background: var(--success); color: white; }
 #step-ind-1.completed .step-label,
-#step-ind-2.completed .step-label { color: var(--success); }
+#step-ind-2.completed .step-label,
+#step-ind-3.completed .step-label { color: var(--success); }
 
 /* ══════════════════════
    CARD
@@ -521,6 +525,122 @@ body {
   box-shadow: 0 4px 16px rgba(45,42,38,.25);
 }
 .toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══════════════════════
+   SURVEY / LIKERT SCALE
+══════════════════════ */
+.survey-item {
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.survey-q-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+.survey-q-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 4px;
+}
+.survey-q-hint {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+}
+.survey-q-label + .survey-q-text { margin-top: 0; }
+.survey-q-text:last-of-type { margin-bottom: 14px; }
+.likert {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.likert-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .18s;
+  font-family: inherit;
+}
+.likert-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+.likert-btn.likert-btn--active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+  transform: scale(1.08);
+  box-shadow: 0 2px 10px rgba(199,91,57,.25);
+}
+.likert-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 8px;
+  padding: 0 8px;
+}
+
+/* ══════════════════════
+   INPUT HINT
+══════════════════════ */
+.input-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* ══════════════════════
+   SUCCESS BADGES
+══════════════════════ */
+.success-badge-wrap { text-align: center; margin-bottom: 16px; }
+.success-badge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 99px;
+}
+.success-badge--reg { background: var(--success-light); color: var(--success); }
+.success-badge--wait { background: #dbeafe; color: #2563eb; }
+
+/* ══════════════════════
+   WAITLIST BADGES
+══════════════════════ */
+.badge--wait {
+  background: #dbeafe;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.result-card--wait { border-left: 3px solid #2563eb; }
+.result-count--wait { background: #dbeafe; color: #2563eb; }
+.badge-type--wait { background: #dbeafe; color: #2563eb; }
+.chip--wait-count {
+  background: #dbeafe;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 99px;
+}
 
 /* ══════════════════════
    ONLINE / OFFLINE BADGES
@@ -859,6 +979,10 @@ tbody tr:hover td { background: var(--bg-warm); }
   .schedule-side { flex-direction: row; width: 100%; justify-content: space-between; }
   .slot-bar { width: 60px; }
   .steps { gap: 0; }
-  .step-connector { width: 28px; }
+  .step-connector { width: 18px; }
+  .step-label { font-size: 11px; }
+  .step-circle { width: 32px; height: 32px; font-size: 13px; }
+  .likert { gap: 8px; }
+  .likert-btn { width: 40px; height: 40px; font-size: 14px; }
   .detail-top { flex-direction: column; }
 }
