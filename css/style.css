@@ -552,11 +552,14 @@ body {
 .survey-q-text {
   margin-bottom: 14px;
 }
+.likert-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .likert {
   display: flex;
   gap: 10px;
-  justify-content: center;
-  padding: 0 4px;
 }
 .likert-btn {
   width: 44px;
@@ -586,12 +589,10 @@ body {
 .likert-labels {
   display: flex;
   justify-content: space-between;
+  width: 260px;
   font-size: 11px;
   color: var(--text-light);
   margin-top: 6px;
-  max-width: 280px;
-  margin-left: auto;
-  margin-right: auto;
 }
 .survey-q-note {
   text-align: right;
