@@ -28,7 +28,7 @@
   <!-- ── 수강 신청 섹션 ── -->
   <section id="section-register">
 
-    <!-- 단계 표시 -->
+    <!-- 단계 표시 (4단계) -->
     <div class="steps">
       <div class="step-item" id="step-ind-1">
         <div class="step-circle">1</div>
@@ -42,6 +42,11 @@
       <div class="step-connector"></div>
       <div class="step-item inactive" id="step-ind-3">
         <div class="step-circle">3</div>
+        <div class="step-label">사전 체크</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item inactive" id="step-ind-4">
+        <div class="step-circle">4</div>
         <div class="step-label">신청 완료</div>
       </div>
     </div>
@@ -52,11 +57,15 @@
       <p class="card-desc">소속 조직명과 이름을 입력해 주세요.</p>
       <div class="form-group">
         <label for="inputOrg">소속 조직명</label>
-        <input type="text" id="inputOrg" placeholder="예) 개발팀, 마케팅팀" maxlength="50" autocomplete="off">
+        <input type="text" id="inputOrg" placeholder="예) 법무팀, 성장지원팀" maxlength="50" autocomplete="off">
       </div>
       <div class="form-group">
         <label for="inputName">이름</label>
         <input type="text" id="inputName" placeholder="홍길동" maxlength="20" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="inputEmail">회사 이메일</label>
+        <input type="email" id="inputEmail" placeholder="hong@woowayouths.com" maxlength="100" autocomplete="off">
       </div>
       <button class="btn btn--primary" onclick="goToStep2()">다음 단계</button>
     </div>
@@ -68,12 +77,78 @@
       <div id="scheduleList"></div>
       <div class="btn-row">
         <button class="btn btn--ghost" onclick="goToStep1()">← 이전</button>
+        <button class="btn btn--primary" onclick="goToStep3()">다음 단계</button>
+      </div>
+    </div>
+
+    <!-- Step 3: 사전 활용 수준 체크 -->
+    <div class="card hidden" id="card-step-3">
+      <h2 class="card-title">Claude AI교육 사전서베이</h2>
+      <p class="card-desc">현재 본인의 상황을 솔직하게 알려주세요!</p>
+
+      <div class="survey-item">
+        <div class="survey-q-label">Q1. Claude Cowork</div>
+        <div class="survey-q-text">나는 Claude Cowork를 활용해 내 PC의 파일을 직접 수정하는 등 실제 업무를 실행할 수 있다.</div>
+        <div class="likert" id="likert-q1">
+          <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q1',1)">1</button>
+          <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q1',2)">2</button>
+          <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q1',3)">3</button>
+          <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q1',4)">4</button>
+          <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q1',5)">5</button>
+        </div>
+        <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        <div class="survey-q-note">※ Cowork: Claude가 내 PC의 파일을 직접 작업하는 기능</div>
+      </div>
+
+      <div class="survey-item">
+        <div class="survey-q-label">Q2. Claude Project</div>
+        <div class="survey-q-text">나는 Project 기능을 활용해 클로드와 업무 맥락을 공유하여 더 나은 결과물을 얻을 수 있다.</div>
+        <div class="likert" id="likert-q2">
+          <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q2',1)">1</button>
+          <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q2',2)">2</button>
+          <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q2',3)">3</button>
+          <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q2',4)">4</button>
+          <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q2',5)">5</button>
+        </div>
+        <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        <div class="survey-q-note">※ Project: 반복 사용할 지시사항과 파일을 미리 세팅하는 기능</div>
+      </div>
+
+      <div class="survey-item">
+        <div class="survey-q-label">Q3. Claude Skills</div>
+        <div class="survey-q-text">나는 Claude Skills를 통해 Claude에게 일하는 방법을 전달하여 업무의 품질을 높이고, 반복업무를 자동화할 수 있다.</div>
+        <div class="likert" id="likert-q3">
+          <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q3',1)">1</button>
+          <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q3',2)">2</button>
+          <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q3',3)">3</button>
+          <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q3',4)">4</button>
+          <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q3',5)">5</button>
+        </div>
+        <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        <div class="survey-q-note">※ Skills: 특정 업무에 맞는 지시서를 만들어 재사용하는 기능</div>
+      </div>
+
+      <div class="survey-item">
+        <div class="survey-q-label">Q4. 클로드 활용 수준</div>
+        <div class="survey-q-text">나는 내 업무에 Claude의 다양한 기능들을 어떻게 적용해야할지 구체적으로 알고 있다.</div>
+        <div class="likert" id="likert-q4">
+          <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q4',1)">1</button>
+          <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q4',2)">2</button>
+          <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q4',3)">3</button>
+          <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q4',4)">4</button>
+          <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q4',5)">5</button>
+        </div>
+        <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+      </div>
+
+      <div class="btn-row" style="margin-top:24px">
+        <button class="btn btn--ghost" onclick="goToStep2FromSurvey()">← 이전</button>
         <button class="btn btn--primary" onclick="submitRegistration()">신청하기</button>
       </div>
     </div>
 
-    <!-- Step 3: 완료 -->
-    <div class="card hidden" id="card-step-3">
+    <!-- Step 4: 완료 -->
+    <div class="card hidden" id="card-step-4">
       <div class="success-screen">
         <div class="success-icon-wrap">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -111,7 +186,7 @@
 </main>
 
 <footer class="footer">
-  <a href="admin.html">관리자 페이지 →</a>
+  <span>&copy; 우청 성장지원팀</span>
 </footer>
 
 <script src="js/data.js"></script>
