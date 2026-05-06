@@ -52,12 +52,87 @@
       <p class="card-desc">소속 조직명과 이름을 입력해 주세요.</p>
       <div class="form-group">
         <label for="inputOrg">소속 조직명</label>
-        <input type="text" id="inputOrg" placeholder="예) 개발팀, 마케팅팀" maxlength="50" autocomplete="off">
+        <input type="text" id="inputOrg" placeholder="예) 법무팀, 성장지원팀" maxlength="50" autocomplete="off">
       </div>
       <div class="form-group">
         <label for="inputName">이름</label>
         <input type="text" id="inputName" placeholder="홍길동" maxlength="20" autocomplete="off">
       </div>
+      <div class="form-group">
+        <label for="inputEmail">회사 이메일</label>
+        <input type="email" id="inputEmail" placeholder="hong@woowayouths.com" maxlength="100" autocomplete="off">
+      </div>
+
+      <!-- 사전 수집 문항 -->
+      <div class="survey-section">
+        <h3 class="survey-title">사전 활용 수준 체크</h3>
+        <p class="survey-desc">현재 본인의 Claude 활용 수준을 체크해 주세요. (선택)</p>
+
+        <div class="survey-item" data-q="q1">
+          <div class="survey-q">
+            <span class="survey-q-label">Q1. Claude Cowork</span>
+            <span class="survey-q-text">나는 Claude Cowork를 활용하여 실제 업무를 실행시킬 수 있다.</span>
+            <span class="survey-q-hint">Cowork: Claude가 내 PC의 파일을 직접 작업하는 기능</span>
+          </div>
+          <div class="likert" id="likert-q1">
+            <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q1',1)">1</button>
+            <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q1',2)">2</button>
+            <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q1',3)">3</button>
+            <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q1',4)">4</button>
+            <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q1',5)">5</button>
+          </div>
+          <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        </div>
+
+        <div class="survey-item" data-q="q2">
+          <div class="survey-q">
+            <span class="survey-q-label">Q2. Claude Project</span>
+            <span class="survey-q-text">나는 Project 기능을 활용해 클로드와 업무 맥락을 공유하여 더 나은 결과물을 얻을 수 있다.</span>
+            <span class="survey-q-hint">Project: 반복 사용할 지시사항과 파일을 미리 세팅하는 기능</span>
+          </div>
+          <div class="likert" id="likert-q2">
+            <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q2',1)">1</button>
+            <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q2',2)">2</button>
+            <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q2',3)">3</button>
+            <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q2',4)">4</button>
+            <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q2',5)">5</button>
+          </div>
+          <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        </div>
+
+        <div class="survey-item" data-q="q3">
+          <div class="survey-q">
+            <span class="survey-q-label">Q3. Claude Skills</span>
+            <span class="survey-q-text">나는 Claude Skills를 만들어 클로드에게 일하는 방법을 지시하여 업무 품질을 높이고, 반복 업무를 자동화할 수 있다.</span>
+            <span class="survey-q-hint">Skills: 특정 업무에 맞는 지시서를 만들어 재사용하는 기능</span>
+          </div>
+          <div class="likert" id="likert-q3">
+            <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q3',1)">1</button>
+            <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q3',2)">2</button>
+            <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q3',3)">3</button>
+            <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q3',4)">4</button>
+            <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q3',5)">5</button>
+          </div>
+          <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        </div>
+
+        <div class="survey-item" data-q="q4">
+          <div class="survey-q">
+            <span class="survey-q-label">Q4. 클로드 활용 수준</span>
+            <span class="survey-q-text">나는 내 업무에 Claude를 적용하는 구체적인 방법을 알고 있다.</span>
+          </div>
+          <div class="likert" id="likert-q4">
+            <button type="button" class="likert-btn" data-val="1" onclick="setLikert('q4',1)">1</button>
+            <button type="button" class="likert-btn" data-val="2" onclick="setLikert('q4',2)">2</button>
+            <button type="button" class="likert-btn" data-val="3" onclick="setLikert('q4',3)">3</button>
+            <button type="button" class="likert-btn" data-val="4" onclick="setLikert('q4',4)">4</button>
+            <button type="button" class="likert-btn" data-val="5" onclick="setLikert('q4',5)">5</button>
+          </div>
+          <div class="likert-labels"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+        </div>
+
+      </div>
+
       <button class="btn btn--primary" onclick="goToStep2()">다음 단계</button>
     </div>
 
