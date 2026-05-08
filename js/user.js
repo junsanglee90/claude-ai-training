@@ -7,7 +7,7 @@ let state = {
   org: '',
   name: '',
   email: '',
-  q1: '', q2: '', q3: '', q4: '',
+  q1: '', q2: '', q3: '', q4: '', q5: '',
   selectedScheduleId: null,
   schedules: []
 };
@@ -18,6 +18,15 @@ function setLikert(q, val) {
   const container = document.getElementById('likert-' + q);
   container.querySelectorAll('.likert-btn').forEach(btn => {
     btn.classList.toggle('likert-btn--active', Number(btn.dataset.val) === val);
+  });
+}
+
+// ─── 예/아니오 선택 ───
+function setYesNo(q, val) {
+  state[q] = val;
+  const container = document.getElementById('yesno-' + q);
+  container.querySelectorAll('.yesno-btn').forEach(btn => {
+    btn.classList.toggle('yesno-btn--active', btn.dataset.val === val);
   });
 }
 
@@ -177,7 +186,7 @@ async function submitRegistration() {
       org: state.org,
       name: state.name,
       email: state.email,
-      q1: state.q1, q2: state.q2, q3: state.q3, q4: state.q4
+      q1: state.q1, q2: state.q2, q3: state.q3, q4: state.q4, q5: state.q5
     });
 
     if (!result.ok) {
@@ -221,7 +230,7 @@ function renderSuccess(reg, schedule) {
 }
 
 function resetRegistration() {
-  state = { org: '', name: '', email: '', q1: '', q2: '', q3: '', q4: '', selectedScheduleId: null, schedules: [] };
+  state = { org: '', name: '', email: '', q1: '', q2: '', q3: '', q4: '', q5: '', selectedScheduleId: null, schedules: [] };
   document.getElementById('inputOrg').value = '';
   document.getElementById('inputName').value = '';
   document.getElementById('inputEmail').value = '';
@@ -229,6 +238,8 @@ function resetRegistration() {
     const c = document.getElementById('likert-' + q);
     if (c) c.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('likert-btn--active'));
   });
+  const yc = document.getElementById('yesno-q5');
+  if (yc) yc.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('yesno-btn--active'));
   showStep(1);
 }
 
