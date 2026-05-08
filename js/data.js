@@ -7,7 +7,7 @@
  */
 
 // ──────────────────────────────────────────────
-const API_URL = 'https://script.google.com/a/macros/woowayouths.com/s/AKfycbyT1FKjWIE_ecBADc6sP-p63t3Pt4RGV3JJefRj35XjLgFZxOPzii1GAfeIl1ngG9Cs/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx2FkqSlxLN0Pc2tvQGRLybTXuU7CopadRkJYEzNHIOzJ814L8GDkOpFE3uwVHh-vA/exec';
 // ──────────────────────────────────────────────
 
 /**
@@ -87,7 +87,7 @@ async function requestRegister(info) {
   return apiCall({
     action: 'register', scheduleId: info.scheduleId,
     org: info.org, name: info.name, email: info.email || '',
-    q1: info.q1 || '', q2: info.q2 || '', q3: info.q3 || '', q4: info.q4 || ''
+    q1: info.q1 || '', q2: info.q2 || '', q3: info.q3 || '', q4: info.q4 || '', q5: info.q5 || ''
   });
 }
 

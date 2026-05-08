@@ -87,7 +87,16 @@
       <p class="card-desc">현재 본인의 상황을 솔직하게 알려주세요!</p>
 
       <div class="survey-item">
-        <div class="survey-q-label">Q1. Claude Cowork</div>
+        <div class="survey-q-label">Q1. Claude Teams 계정</div>
+        <div class="survey-q-text">사내 Claude Teams 계정이 있으신가요?</div>
+        <div class="yesno-wrap" id="yesno-q5">
+          <button type="button" class="yesno-btn" data-val="예" onclick="setYesNo('q5','예')">예</button>
+          <button type="button" class="yesno-btn" data-val="아니오" onclick="setYesNo('q5','아니오')">아니오</button>
+        </div>
+      </div>
+
+      <div class="survey-item">
+        <div class="survey-q-label">Q2. Claude Cowork</div>
         <div class="survey-q-text">나는 Claude Cowork를 활용해 내 PC의 파일을 직접 수정하는 등 실제 업무를 실행할 수 있다.</div>
         <div class="likert-wrap">
           <div class="likert" id="likert-q1">
@@ -103,7 +112,7 @@
       </div>
 
       <div class="survey-item">
-        <div class="survey-q-label">Q2. Claude Project</div>
+        <div class="survey-q-label">Q3. Claude Project</div>
         <div class="survey-q-text">나는 Project 기능을 활용해 클로드와 업무 맥락을 공유하여 더 나은 결과물을 얻을 수 있다.</div>
         <div class="likert-wrap">
           <div class="likert" id="likert-q2">
@@ -119,7 +128,7 @@
       </div>
 
       <div class="survey-item">
-        <div class="survey-q-label">Q3. Claude Skills</div>
+        <div class="survey-q-label">Q4. Claude Skills</div>
         <div class="survey-q-text">나는 Claude Skills를 통해 Claude에게 일하는 방법을 전달하여 업무의 품질을 높이고, 반복업무를 자동화할 수 있다.</div>
         <div class="likert-wrap">
           <div class="likert" id="likert-q3">
@@ -135,7 +144,7 @@
       </div>
 
       <div class="survey-item">
-        <div class="survey-q-label">Q4. 클로드 활용 수준</div>
+        <div class="survey-q-label">Q5. 클로드 활용 수준</div>
         <div class="survey-q-text">나는 내 업무에 Claude의 다양한 기능들을 어떻게 적용해야할지 구체적으로 알고 있다.</div>
         <div class="likert-wrap">
           <div class="likert" id="likert-q4">
